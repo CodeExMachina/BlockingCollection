@@ -367,4 +367,4 @@ A custom condition variable generator can be used like so:
 BlockingCollection<int, QueueContainer<int>, Win32ConditionVariableGenerator> collection;
 ```
 ## License
-BlockingCollection uses the GPLv3 license that is available here.
+BlockingCollection uses the GPLv3 license that is available [here](https://github.com/CodeExMachina/BlockingCollection/blob/master/LICENSE).

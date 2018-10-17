@@ -8,7 +8,7 @@ BlockingCollection is a C++11 thread safe collection class that provides the fol
 - Insertion and removal 'bulk" operations that allow more than one element to be added or taken at once. 
 - Priority-based insertion and removal operations. 
 - Encapsulates any collection type that satisfy the ProducerConsumerCollection requirement.
-- Minimizes sleeps, wake ups and lock contention by managing an active subset of producer and consumer threads.
+- [Minimizes](#performance-optimizations) sleeps, wake ups and lock contention by managing an active subset of producer and consumer threads.
 - Pluggable condition variable and lock types.
 - Range-based loop support.
 ## Bounding and Blocking Support

@@ -16,7 +16,7 @@ BlockingCollection<T> supports bounding and blocking. Bounding means that you ca
 of the collection. Bounding is important in certain scenarios because it enables you to control the maximum
 size of the collection in memory, and it prevents the producing threads from moving too far ahead of the consuming threads. 
   
-Multiple threads or tasks can add elements to the collection concurrently, and if the collection reaches its specified maximum capacity, the producing threads will block until an element is removed. Multiple consumers can remove elements concurrently, and if the collection becomes empty, the consuming threads will block until a producer adds an item. A producing thread can call the complete_adding method to indicate that no more elements will be added. Consumers monitor the is_completed property to know when the collection is empty and no more elements will be added. The following example shows a simple BlockingCollection with a bounded capacity of 100. A producer task adds items to the collection as long as some external condition is true, and then calls complete_adding. The consumer task takes items until the is_completed property is true.  
+Multiple threads or tasks can add elements to the collection, and if the collection reaches its specified maximum capacity, the producing threads will block until an element is removed. Multiple consumers can remove elements, and if the collection becomes empty, the consuming threads will block until a producer adds an item. A producing thread can call the complete_adding method to indicate that no more elements will be added. Consumers monitor the is_completed property to know when the collection is empty and no more elements will be added. The following example shows a simple BlockingCollection with a bounded capacity of 100. A producer task adds items to the collection as long as some external condition is true, and then calls complete_adding. The consumer task takes items until the is_completed property is true.  
 ```C++
 // A bounded collection. It can hold no more 
 // than 100 items at once.
@@ -59,7 +59,6 @@ std::thread producer_thread([&collection]() {
   collection.complete_adding();
 });
 ```
-For a complete example, see
 ## Timed Blocking Operations
 In timed blocking try_add and try_take operations on bounded collections, the method tries to add or take an item. If an item is available it is placed into the variable that was passed in by reference, and the method returns Ok. If no item is retrieved after a specified time-out period the method returns TimedOut. The thread is then free to do some other useful work before trying again to access the collection.
 ```C++
@@ -93,7 +92,7 @@ auto status = collection.try_take_bulk(arr, arr.size(), taken);
 When you create a BlockingCollection object, you can specify not only the bounded capacity but also the type of collection to use. 
 For example, you could specify a ```QueueContainer<T>``` object for first in, first out (FIFO) behavior, or a ```StackContainer<T>``` object for last in, first out (LIFO) behavior. You can use any collection class that supports the ProducerConsumerCollection requirement. The default collection type for BlockingCollection is ```QueueContainer<T>```. The following code example shows how to create a BlockingCollection of strings that has a capacity of 1000 and uses a ```StackContainer<T>```
 ```C++
-BlockingCollection<std::string, StackContainer<int>> stack(1000);
+BlockingCollection<std::string, StackContainer<std::string>> stack(1000);
 ```
 Type aliases are also available:
 ```C++

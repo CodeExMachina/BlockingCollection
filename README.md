@@ -1,7 +1,7 @@
 # BlockingCollection
 BlockingCollection is a C++11 thread safe collection class that provides the following features:
 - Implementation of classic Producer/Consumer pattern (i.e. condition variable, mutex);   
-- Concurrent adding and taking of items from multiple threads.
+- Adding and taking of items from multiple threads.
 - Optional maximum capacity.
 - Insertion and removal operations that block when collection is empty or full.
 - Insertion and removal "try" operations that do not block or that block up to a specified period of time.

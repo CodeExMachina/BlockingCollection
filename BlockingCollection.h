@@ -1127,7 +1127,7 @@ namespace code_machina {
                 std::chrono::milliseconds(-1));
             }
 
-            return !(status_ == it.status_);
+            return !(status_ != BlockingCollectionStatus::Ok);
         }
 
         Iterator& operator++() {
@@ -1150,9 +1150,7 @@ namespace code_machina {
 
     public:
         Iterator begin() { return { *this }; }
-        Iterator end()   {
-            return { *this, BlockingCollectionStatus::Completed };
-        }
+        Iterator end()   { return { *this }; }
 
     private:
         // the member functions below assume lock is held!

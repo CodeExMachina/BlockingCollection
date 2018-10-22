@@ -22,6 +22,7 @@
 #include <thread>
 #include <chrono>
 #include <deque>
+#include <algorithm>
 
 namespace code_machina {
 
@@ -852,7 +853,7 @@ namespace code_machina {
         /// @see BlockingCollectionStatus
         template<typename... Args>
         BlockingCollectionStatus emplace(Args&&... args) {
-            try_emplace_timed(std::chrono::milliseconds(-1),
+            return try_emplace_timed(std::chrono::milliseconds(-1),
             std::forward<Args>(args)...);
         }
 

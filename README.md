@@ -365,5 +365,10 @@ A custom condition variable generator can be used like so:
 ```C++
 BlockingCollection<int, QueueContainer<int>, Win32ConditionVariableGenerator> collection;
 ```
+## References
+BlockingCollection implements optimizations described in the following paper:
+
+[2007] Hewlett Packard Development Company, L.P *"Techniques for Improving the Scalability of Applications Using POSIX Thread Condition Variables"* [pdf](https://www.yumpu.com/en/document/view/18689696/making-condition-variables-perform-hp)
+
 ## License
 BlockingCollection uses the GPLv3 license that is available [here](https://github.com/CodeExMachina/BlockingCollection/blob/master/LICENSE).

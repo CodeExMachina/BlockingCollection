@@ -1834,6 +1834,136 @@ namespace code_machina {
     template<typename T>
     using BlockingPriorityQueue = BlockingCollection<T,
     PriorityContainer<T, PriorityComparer<T>>>;
+
+#ifdef _WIN32
+    /// @class WIN32_CRITICAL_SECTION
+    /// WIN32_CRITICAL_SECTION wraps the Win32 CRITICAL_SECTION object so that
+    /// it meets the BasicLockable requirement (i.e. lock and unlock member
+    /// functions).
+    ///
+    /// @see WIN32_SRWLOCK
+    class WIN32_CRITICAL_SECTION {
+    public:
+        WIN32_CRITICAL_SECTION() {
+            InitializeCriticalSection(&cs_);
+        }
+
+        void lock() {
+            EnterCriticalSection(&cs_);
+        }
+
+        void unlock() {
+            LeaveCriticalSection(&cs_);
+        }
+
+        CRITICAL_SECTION& native_handle() {
+            return cs_;
+        }
+    private:
+        CRITICAL_SECTION cs_;
+    };
+
+    /// @class WIN32_SRWLOCK
+    /// WIN32_SRWLOCK wraps the Win32 SRWLOCK object so that it meets the
+    /// BasicLockable requirement (i.e. lock and unlock member functions).
+    ///
+    /// @see WIN32_CRITICAL_SECTION
+    class WIN32_SRWLOCK {
+    public:
+        WIN32_SRWLOCK() {
+            InitializeSRWLock(&srw_);
+        }
+
+        void lock() {
+            AcquireSRWLockExclusive(&srw_);
+        }
+
+        void unlock() {
+            ReleaseSRWLockExclusive(&srw_);
+        }
+
+        SRWLOCK& native_handle() {
+            return srw_;
+        }
+    private:
+        SRWLOCK srw_;
+    };
+
+    template <>
+    struct ConditionVarTraits<CONDITION_VARIABLE, WIN32_SRWLOCK> {
+        static void initialize(CONDITION_VARIABLE& cond_var) {
+            InitializeConditionVariable(&cond_var);
+        }
+
+        static void signal(CONDITION_VARIABLE& cond_var) {
+            WakeConditionVariable(&cond_var);
+        }
+
+        static void broadcast(CONDITION_VARIABLE& cond_var) {
+            WakeAllConditionVariable(&cond_var);
+        }
+
+        static void wait(CONDITION_VARIABLE& cond_var,
+        std::unique_lock<WIN32_SRWLOCK>& lock) {
+            SleepConditionVariableSRW(&cond_var, &lock.mutex()->native_handle(),
+            INFINITE, 0);
+        }
+
+        template<class Rep, class Period> static bool wait_for(
+            CONDITION_VARIABLE& cond_var, std::unique_lock<WIN32_SRWLOCK>& lock,
+            const std::chrono::duration<Rep, Period>& rel_time) {
+            DWORD milliseconds = static_cast<DWORD>(rel_time.count());
+
+            if (!SleepConditionVariableSRW(&cond_var,
+            &lock.mutex()->native_handle(), milliseconds, 0)) {
+                if (GetLastError() == ERROR_TIMEOUT)
+                    return true;
+            }
+
+            return false;
+        }
+    };
+
+    template <>
+    struct ConditionVarTraits<CONDITION_VARIABLE, WIN32_CRITICAL_SECTION> {
+        static void initialize(CONDITION_VARIABLE& cond_var) {
+            InitializeConditionVariable(&cond_var);
+        }
+
+        static void signal(CONDITION_VARIABLE& cond_var) {
+            WakeConditionVariable(&cond_var);
+        }
+
+        static void broadcast(CONDITION_VARIABLE& cond_var) {
+            WakeAllConditionVariable(&cond_var);
+        }
+
+        static void wait(CONDITION_VARIABLE& cond_var,
+        std::unique_lock<WIN32_CRITICAL_SECTION>& lock) {
+            SleepConditionVariableCS(&cond_var, &lock.mutex()->native_handle(),
+            INFINITE);
+        }
+
+        template<class Rep, class Period> static bool wait_for(
+            CONDITION_VARIABLE& cond_var,
+            std::unique_lock<WIN32_CRITICAL_SECTION>& lock,
+            const std::chrono::duration<Rep, Period>& rel_time) {
+            DWORD milliseconds = static_cast<DWORD>(rel_time.count());
+
+            if (!SleepConditionVariableCS(&cond_var,
+            &lock.mutex()->native_handle(), milliseconds)) {
+                if (GetLastError() == ERROR_TIMEOUT)
+                    return true;
+            }
+
+            return false;
+        }
+    };
+
+    using Win32ConditionVariableGenerator = ConditionVariableGenerator<
+    ThreadContainer<std::thread::id>, NotFullSignalStrategy<16>,
+    NotEmptySignalStrategy<16>, CONDITION_VARIABLE, WIN32_SRWLOCK>;
+#endif
 } // namespace code_machina
 
 #endif /* BlockingCollection_h */

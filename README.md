@@ -1,5 +1,6 @@
 # BlockingCollection
 BlockingCollection is a C++11 thread safe collection class that provides the following features:
+- Modeled after .NET BlockingCollection class. 
 - Implementation of classic Producer/Consumer pattern (i.e. condition variable, mutex);   
 - Adding and taking of items from multiple threads.
 - Optional maximum capacity.
@@ -11,6 +12,7 @@ BlockingCollection is a C++11 thread safe collection class that provides the fol
 - [Minimizes](#performance-optimizations) sleeps, wake ups and lock contention by managing an active subset of producer and consumer threads.
 - Pluggable condition variable and lock types.
 - Range-based loop support.
+
 ## Bounding and Blocking Support
 BlockingCollection<T> supports bounding and blocking. Bounding means that you can set the maximum capacity
 of the collection. Bounding is important in certain scenarios because it enables you to control the maximum
@@ -366,6 +368,8 @@ A custom condition variable generator can be used like so:
 BlockingCollection<int, QueueContainer<int>, Win32ConditionVariableGenerator> collection;
 ```
 ## References
+1. ^ [a](#bounding-and-blocking-support) [b](#timed-blocking-operations) Microsoft Docs, *"BlockingCollection Overview"* [link](https://docs.microsoft.com/en-us/dotnet/standard/collections/thread-safe/blockingcollection-overview)
+
 BlockingCollection implements optimizations described in the following paper:
 
 [2007] Hewlett Packard Development Company, L.P *"Techniques for Improving the Scalability of Applications Using POSIX Thread Condition Variables"* [pdf](https://www.yumpu.com/en/document/view/18689696/making-condition-variables-perform-hp)

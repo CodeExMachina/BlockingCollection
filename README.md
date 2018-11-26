@@ -368,7 +368,7 @@ A custom condition variable generator can be used like so:
 BlockingCollection<int, QueueContainer<int>, Win32ConditionVariableGenerator> collection;
 ```
 ## References
-1. ^ [a](#bounding-and-blocking-support) [b](#timed-blocking-operations) Microsoft Docs, *"BlockingCollection Overview"* [link](https://docs.microsoft.com/en-us/dotnet/standard/collections/thread-safe/blockingcollection-overview)
+1. ^ [a](#bounding-and-blocking-support) [b](#timed-blocking-operations) [c](#specifying-the-collection-type) Microsoft Docs, *"BlockingCollection Overview"* [link](https://docs.microsoft.com/en-us/dotnet/standard/collections/thread-safe/blockingcollection-overview)
 
 BlockingCollection implements optimizations described in the following paper:
 
